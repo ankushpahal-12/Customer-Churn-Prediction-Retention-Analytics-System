@@ -1,0 +1,2 @@
+Prediction successful:
+{'prediction': 1, 'probability': 0.698843240737915}

@@ -1,47 +1,15 @@
 import pandas as pd
 import numpy as np
-class DataAnalysis:
-    def __init__(self,file_path):
-        self.file_path=file_path
-        self.df=pd.read_csv(self.file_path)
-    
-    def validate(self):
-        print("Analyzing the data.... ")
-        
-        null_values=self.df.isnull().sum().sum()
-        if null_values>0:
-            print(f"Missing values found{null_values} in the dataset.")
-        else:
-            print("No null values will find")
-    
-    def shape(self):
-        sh=self.df.shape # it returns the number of  rows and  columns
-        print("The shape of the data is: ",sh)
-    
-    def info(self):
-        Info=self.df.info() # it gives the summary of the dataset
-        print("info: ",Info)
-        
-    def describe(self):
-        desc=self.df.describe() # it gives the statiscal summary of the numberical columns  (Mean, Std, Min , Max, 25% 50% 70%)
-        print("Describe: ",desc)# used for the detecting the skewness outliers and daata distribbution
-        
-    def unique_values(self):
-        unique_vals=self.df.nunique() # counts the uniques values in each column
-        print("Unique values: ",unique_vals)# checks for the checking cardinaltiy, Identifying Categorical Variables
-        
-    def value_counts(self):
-        value_counts=self.df.value_counts() # Counts frequency of the each value in the column
-        print("Value counts: ",value_counts)# used for the checking imbalance, Target distribution
-        
-    def column_missing(self):
-        column_missing_values=self.df.isnull().sum()# it gives missing values per column
-        print("Missing Values per column: ",column_missing_values)
-
-class MissingDataHandler:
-    def __init__(self,file_path):
-        self.file_path=file_path
-        self.df=pd.read_csv(self.file_path)
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
+from sklearn.decomposition import PCA
+class DataTransform:
+    def __init__(self,df,target_column):
+        self.df=df
+        self.target_column=target_column
         
     def handle_missing_data(self):
         total_size=self.df.size # total number of the rows and the size 
@@ -77,18 +45,9 @@ class MissingDataHandler:
                     print(f"Missing values in column {col} have been filled with mode value: {mode_value}")
             print("Missing values have been handled successfully.")
             return self.df
-        
-    def handle_date(self):
-        date_cols=self.df.select_dtypes(include=["object"]).colummns
-        for col in date_cols:
-            try:
-                self.df[col]=pd.to_datetime(self.df[col])
-                print(f"Column {col} has been converted to datetime format.")
-            except Exception as e:
-                print(f"Column {col} could not be converted to datetime format. Error: {e}")
                         
     def handle_outliers(self):
-        num_cols=self.df.select_dtypes(include="number").colummns
+        num_cols=self.df.select_dtypes(include="number").columns
         for col in num_cols:
             Q1=self.df[col].quantile(0.25) # quantile it retruns the percentile values and it is used in the iqr outlier detection 
             Q2=self.df[col].quantile(0.75)
@@ -96,7 +55,9 @@ class MissingDataHandler:
             lower_bound=Q1-1.5*IQR
             upper_bound=Q2+1.5*IQR
                 
-            outliers=((self.data[self.df[col]<lower_bound] | self.df[col]>upper_bound)).sum()
+            outliers=((self.df[col]<lower_bound)| 
+                      (self.df[col]>upper_bound)).sum()
+            
             print(f"Column {col} has {outliers} outliers.")
                 
             print("we are using the capping meathod")
@@ -119,3 +80,94 @@ class MissingDataHandler:
     
     Capping is a technique used to handle outliers by replaacing extreme values beyond a certain statiscal boundary like iqr instread of removing them preserving dataset size while reducing the skewness
     """  
+    def delete_column(self):
+        if "customerID" in self.df.columns:
+            self.df.drop("customerID",axis=1,inplace=True)
+        if "TotalCharges" in self.df.columns:
+            self.df["TotalCharges"]=pd.to_numeric(
+                self.df["TotalCharges"],errors="coerce"
+                )
+        
+        
+        
+    def transform_data(self):
+
+        print("Starting To Transform the data....")
+
+        # Step 1: Delete unwanted columns
+        self.delete_column()
+
+        # Step 2: Feature Engineering (BEFORE splitting)
+
+        self.df["tenure_group"] = pd.cut(
+            self.df["tenure"],
+            bins=[0, 12, 24, 48, 72],
+            labels=["0-1yr", "1-2yr", "2-4yr", "4-6yr"]
+        )
+
+        self.df["avg_monthly_cost"] = (
+            self.df["TotalCharges"] / (self.df["tenure"] + 1)
+        )
+
+        self.df["high_monthly_charge"] = (
+            self.df["MonthlyCharges"] > self.df["MonthlyCharges"].median()
+        ).astype(int)
+        
+        self.df["long_term_customer"]=(
+            self.df["tenure"]>24
+        ).astype(int)
+        
+
+        self.df["is_month_to_month"] = (
+            self.df["Contract"] == "Month-to-month"
+        ).astype(int)
+
+        # Step 3: Separate features and target
+        X = self.df.drop(self.target_column, axis=1)
+        y = self.df[self.target_column].map({"Yes": 1, "No": 0})
+
+        # Step 4: Train-test split
+        X_train, X_test, y_train, y_test = train_test_split(
+            X,
+            y,
+            test_size=0.2,
+            random_state=42,
+            stratify=y
+        )
+
+        # Step 5: Identify column types (IMPORTANT: use X_train)
+        num_cols = X_train.select_dtypes(include="number").columns
+        cat_cols = X_train.select_dtypes(include="object").columns
+
+        # Step 6: Pipelines
+        numeric_pipeline = Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler())
+        ])
+
+        categorical_pipeline = Pipeline([
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("encoder", OneHotEncoder(drop="first", handle_unknown="ignore"))
+        ])
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("num", numeric_pipeline, num_cols),
+                ("cat", categorical_pipeline, cat_cols)
+            ]
+        )
+
+        # Step 7: Transform
+        X_train = preprocessor.fit_transform(X_train)
+        X_test = preprocessor.transform(X_test)
+
+        # n_components=[0.90,0.92,0.95,0.98]
+        pca=PCA(n_components=0.95,random_state=42)
+        X_train=pca.fit_transform(X_train)
+        X_test=pca.transform(X_test)
+        X_train=pd.DataFrame(X_train,columns=[f"feature_{i}" for i in range(X_train.shape[1])])
+        X_test=pd.DataFrame(X_test,columns=[f"feature_{i}" for i in range(X_test.shape[1])])
+
+        print("Transformation of the data is complete...")
+
+        return X_train, X_test, y_train, y_test, preprocessor,pca

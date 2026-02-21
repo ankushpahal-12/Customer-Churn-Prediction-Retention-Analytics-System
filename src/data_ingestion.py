@@ -6,10 +6,11 @@ class DataIngestion:
         self.output_path=output_path
         
     def ingestion_data(self):
+        print("Starting the Data to ingestion process....")
         df=pd.read_csv(self.input_path)
-        os.makedirs(self.output_path,exist_ok=True)
-        raw_path=os.path.join(self.output_path,)
-        df.to_csv(raw_path,index=False)
         
-        return raw_path
+        os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
+
+        df.to_csv(self.output_path, index=False)
+        return df
         

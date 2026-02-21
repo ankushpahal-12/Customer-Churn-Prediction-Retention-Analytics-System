@@ -1,0 +1,3 @@
+data:
+  raw_data_path: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+  processed_data_path: data/processed/WA_Fn-UseC_-Telco-Customer-Churn.csv
