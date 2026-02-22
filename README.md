@@ -1,121 +1,128 @@
-# Customer Churn Prediction System
+# Customer Churn Prediction & Retention Analytics System
 
-An end-to-end Machine Learning project to predict customer churn using advanced preprocessing, PCA, ensemble learning, and model optimization techniques.
+An end-to-end **Machine Learning production-grade pipeline** that predicts telecom customer churn using advanced preprocessing, dimensionality reduction (PCA), ensemble learning, and model optimization techniques.
 
-This project includes:
-- Data ingestion
-- Data preprocessing
-- Feature engineering
-- PCA dimensionality reduction
-- Model training (Logistic, Random Forest, XGBoost, LightGBM)
-- Stacking ensemble
-- Model evaluation
-- Model saving
-- Logging and exception handling
-- Ready for deployment
+Built with modular architecture, logging, exception handling, and deployment-ready artifacts.
 
 ---
 
-## Project Overview
+## Problem Statement
 
-Customer churn prediction helps telecom companies identify customers who are likely to leave the service.
+Customer churn prediction helps telecom companies identify customers who are likely to discontinue their services.
 
-This system:
-- Processes raw data
-- Performs feature engineering
-- Applies preprocessing pipelines
-- Uses PCA for dimensionality reduction
-- Trains multiple ML models
-- Selects the best model
-- Saves model artifacts for deployment
+Early identification allows businesses to:
 
----
+- Improve retention strategies  
+- Reduce revenue loss  
+- Optimize marketing spend  
+- Increase customer lifetime value  
 
-## 🛠 Tech Stack
-
-- Python 3.10+
-- Pandas
-- NumPy
-- Scikit-learn
-- XGBoost
-- LightGBM
-- Matplotlib
-- Seaborn
+This system automates the entire ML workflow — from raw data ingestion to model saving.
 
 ---
 
-## 📂 Project Structure
+# 🛠 Tech Stack
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python"/>
+  <img src="https://img.shields.io/badge/Pandas-Data%20Processing-black?logo=pandas"/>
+  <img src="https://img.shields.io/badge/NumPy-Numerical%20Computing-blue?logo=numpy"/>
+  <img src="https://img.shields.io/badge/Scikit--Learn-ML%20Framework-orange?logo=scikit-learn"/>
+  <img src="https://img.shields.io/badge/XGBoost-Gradient%20Boosting-red"/>
+  <img src="https://img.shields.io/badge/LightGBM-Boosting-green"/>
+  <img src="https://img.shields.io/badge/Matplotlib-Visualization-blue"/>
+  <img src="https://img.shields.io/badge/Seaborn-Statistical%20Plots-teal"/>
+</p>
+
+---
+
+#  System Architecture
+
+```
+Raw Data → Data Ingestion → Preprocessing → Feature Engineering → PCA →
+Model Training → Hyperparameter Tuning → Ensemble →
+Evaluation → Model Selection → Artifact Saving → Deployment Ready
+```
+
+---
+
+#  Project Structure
+
+```
 customer_churn_project/
 │
-├── data/                        # Raw & processed datasets
+├── data/
 │   ├── raw/
-│   │   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
-│   │
 │   └── processed/
-│       └── processed_telco_data.csv
 │
-├── artifacts/                   #  Saved Model artifacts and plots  
+├── artifacts/
 │   ├── models/
-│   │   ├── best_model.pkl
-│   │   ├── preprocessor.pkl
-│   │   ├── pca.pkl
-│   │   └── metrics.json
-│   │
 │   └── plots/
-│       ├── confusion_matrix.png
-│       ├── roc_curve.png
-│       └── feature_importance.png
 │
-├── src/                         # Data ingestion & preprocessing
-│   ├── __init__.py
+├── src/
 │   ├── data_ingestion.py
 │   ├── data_analysis.py
 │   └── data_transform.py
 │
-├── model/                        # Model training & evaluation
-│   ├── __init__.py
+├── model/
 │   ├── model_trainer.py
 │   ├── model_evaluation.py
 │   ├── model_selector.py
 │   └── model_saver.py
 │
-├── pipelines/                    # End to end model pipeline
-│   ├── __init__.py
+├── pipelines/
 │   └── training_pipeline.py
 │
-├── utils/                        # Utility functions
-│   ├── __init__.py
+├── utils/
 │   ├── logger.py
 │   └── exception.py
 │
-├── config.yaml                    # Configuration file
-├── requirements.txt               # Dependencies file
-├── README.md                      # Read me file
-└── app.py   (optional for deployment)
-## 📁 File Details
+├── config.yaml
+├── requirements.txt
+├── README.md
+└── app.py (optional deployment)
+```
 
-### 🔹 data_ingestion.py
-- Reads raw dataset
+---
+
+#  Key Features
+
+✔ Modular ML pipeline  
+✔ PCA dimensionality reduction  
+✔ Hyperparameter tuning  
+✔ Stacking ensemble learning  
+✔ Class imbalance handling  
+✔ Threshold optimization  
+✔ Logging & custom exception handling  
+✔ Model artifact saving  
+✔ Deployment-ready structure  
+
+---
+
+#  Machine Learning Workflow
+
+## 1️⃣ Data Ingestion
+- Reads raw CSV dataset
 - Saves processed copy
 - Returns DataFrame
 
-### 🔹 data_transform.py
-- Feature engineering
-- Handling missing values
-- Encoding categorical variables
-- Scaling numeric features
-- PCA dimensionality reduction
-- Train-test split
+## 2️⃣ Data Transformation
+- Missing value handling  
+- Categorical encoding (OneHotEncoder)  
+- Feature scaling  
+- Train-Test split  
+- PCA dimensionality reduction  
 
-### 🔹 model_trainer.py
-- Hyperparameter tuning
-- Logistic Regression (GridSearch)
-- XGBoost (RandomizedSearch)
+## 3️⃣ Model Training
+Models implemented:
+
+- Logistic Regression (GridSearchCV)
 - Random Forest
+- XGBoost (RandomizedSearchCV)
 - LightGBM
 - Stacking Ensemble
 
-### 🔹 model_evaluation.py
+## 4️⃣ Model Evaluation
 - Accuracy
 - Precision
 - Recall
@@ -123,104 +130,130 @@ customer_churn_project/
 - ROC-AUC
 - Confusion Matrix
 - ROC Curve
-- Threshold optimization
+- Threshold Optimization
 
-### 🔹 model_selector.py
-- Compares all models
-- Selects best model based on ROC-AUC
+## 5️⃣ Model Selection
+Best model selected based on **ROC-AUC score**.
 
-### 🔹 model_saver.py
-- Saves:
-  - Best model (.pkl)
-  - Preprocessor
-  - PCA object
-  - Metrics JSON
-
-### 🔹 training_pipeline.py
-- Runs complete end-to-end pipeline
+## 6️⃣ Artifact Saving
+Saved objects:
+- Best Model (`.pkl`)
+- Preprocessor
+- PCA transformer
+- Metrics JSON
+- Evaluation plots
 
 ---
 
-## 📥 Installation Guide
+# 📊 Final Model Performance
 
-### 1️⃣ Clone the Repository
+| Metric | Score |
+|--------|--------|
+| Accuracy | ≈ 79% |
+| Precision | ≈ 59% |
+| Recall | ≈ 68% |
+| F1-Score | ≈ 0.63 |
+| ROC-AUC | ≈ 0.846 |
+
+ROC-AUC stability across experiments indicates strong ranking capability of the model.
+
+---
+
+#  Evaluation Metrics Explained
+
+- **Accuracy** → Overall correctness  
+- **Precision** → Correct churn predictions out of predicted churn  
+- **Recall** → Ability to detect actual churn customers  
+- **F1-score** → Balance between Precision & Recall  
+- **ROC-AUC** → Model’s ability to rank churn vs non-churn  
+
+---
+
+#  Installation Guide
+
+### 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/ankushpahal-12/Customer-Churn-Prediction-Retention-Analytics-System
 cd customer_churn_project
 ```
+
 ### 2️⃣ Create Virtual Environment
 
 ```bash
 python -m venv venv
 ```
-Activate:
-Windows
 
+Activate:
+
+Windows
 ```bash
 venv\Scripts\activate
 ```
-Mac/Linux
 
+Mac/Linux
 ```bash
 source venv/bin/activate
 ```
+
 ### 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-▶️ How To Run The Project
+---
 
-From project root folder:
+# ▶️ Run Training Pipeline
 
 ```bash
 python -m pipelines.training_pipeline
----
+```
 
 This will:
 
-    Load data
-    Transform data
-    Apply PCA
-    Train models
-    Evaluate models
-    Select best model
-    Save artifacts
+- Load data  
+- Transform features  
+- Apply PCA  
+- Train models  
+- Evaluate performance  
+- Select best model  
+- Save artifacts  
 
-📊 Model Performance (Final)
+---
 
-    Balanced Tuned Model:
-    Accuracy ≈ 79%
-    Precision ≈ 59%
-    Recall ≈ 68%
-    F1 Score ≈ 0.63
-    ROC-AUC ≈ 0.846
-    The ROC-AUC remains stable across multiple tuning experiments, indicating strong model ranking capability.
+#  Deployment Ready
 
-📈 Evaluation Metrics Explained
+Artifacts saved inside:
 
-    Accuracy – Overall correct predictions
-    Precision – Correct churn predictions
-    Recall – Ability to detect churn customers
-    F1-score – Balance between precision and recall
-    ROC-AUC – Model ranking strength
+```
+artifacts/models/
+```
 
-🔍 Key ML Concepts Used
+These can be directly integrated into:
+- Flask API
+- FastAPI
+- Streamlit
+- Docker container
+- Cloud deployment (AWS / GCP / Azure)
 
-Feature Engineering
-    OneHotEncoding
-    Scaling
-    PCA
-    Hyperparameter Tuning
-    Class Imbalance Handling
-    Ensemble Learning
-    Stacking
-    Threshold Optimization
-👨‍💻 Author
+---
 
-Ankush
+#  Future Improvements
+
+- SHAP explainability integration  
+- MLflow experiment tracking  
+- CI/CD pipeline  
+- Docker containerization  
+- Real-time inference API  
+
+---
+
+#  Author
+
+**Ankush**  
 B.Tech CSE (AI & ML Specialization)
 
+---
 
+⭐ If you found this project helpful, consider giving it a star!
