@@ -146,7 +146,7 @@ customer_churn_project/
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/ankushpahal-12/Customer-Churn-Prediction-Retention-Analytics-System
 cd customer_churn_project
 ```
 ### 2️⃣ Create Virtual Environment
